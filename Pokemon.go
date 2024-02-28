@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // A Response struct to map the Entire Response
@@ -15,33 +16,29 @@ type Response struct {
 	PokemonID int    `json:"id"`
 }
 
-// A Pokemon Struct to map every pokemon to.
-//type Pokemon struct {
-//	EntryNo int            `json:"entry_number"`
-//	Species PokemonSpecies `json:"pokemon_species"`
-//}
+// Appends the users input onto the api string
+func apiAddress() string {
+	var cA string
+	iA := "http://pokeapi.co/api/v2/pokemon/"
+	cA = iA + userInput()
 
-// A struct to map our Pokemon's Species which includes it's name
-//type PokemonSpecies struct {
-//	Name string `json:"name"`
-//}
+	return cA
+}
 
-func apiAddress(pokeInput string) string {
-	var complete string
-	address := "http://pokeapi.co/api/v2/pokemon/"
-	complete = address + pokeInput
+// Requests users input and converts to lowercase to ensure compatibility with api
+func userInput() string {
+	var uI string
 
-	return complete
+	fmt.Println("Please name a Pokemon.")
+	fmt.Scanln(&uI)
+	fI := strings.ToLower(uI)
+
+	return fI
 }
 
 func main() {
-	//	response, err := http.Get("http://pokeapi.co/api/v2/pokedex/kanto/")
 
-	var userInput string
-	fmt.Println("Please name a Pokemon.")
-	fmt.Scanln(&userInput)
-
-	response, err := http.Get(apiAddress(userInput))
+	response, err := http.Get(apiAddress())
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
@@ -55,7 +52,12 @@ func main() {
 	var responseObject Response
 	json.Unmarshal(responseData, &responseObject)
 
-	fmt.Println("Name:" + responseObject.Name)
-	fmt.Printf("Pokedex ID: %v\n", responseObject.PokemonID)
+	// Compares the pokemon ID to 0, 0 means the user input does not make a working API string
+	if responseObject.PokemonID == 0 {
+		fmt.Println("\nThat's Not a Pokemon.")
+	} else {
+		fmt.Println("\nName:" + responseObject.Name)
+		fmt.Printf("Pokedex ID: %v\n", responseObject.PokemonID)
+	}
 
 }
