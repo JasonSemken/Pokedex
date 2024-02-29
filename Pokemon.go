@@ -35,13 +35,15 @@ type Stat struct {
 	Name string `json:"name"`
 }
 
+// Struct to hold description data
 type DescriptionVersion struct {
-	Descripton  string `json:"flavor_text"`
-	GameVersion string `json:"version"`
+	Descripton  string          `json:"flavor_text"`
+	GameVersion GameDescription `json:"version"`
 }
 
+// Struct to hold the game the description data belongs to
 type GameDescription struct {
-	Game string `json:"game"`
+	Game string `json:"name"`
 }
 
 // Requests users input and converts to lowercase to ensure compatibility with api
@@ -85,6 +87,7 @@ func pokemonRequestReturn(rD Response, sD Response) {
 	} else {
 		fmt.Printf("\nName: %v\n", cases.Title(language.Und, cases.NoLower).String(rD.Name))
 		fmt.Printf("Pokedex ID: %v\n", rD.PokemonID)
+		fmt.Printf("Game: %v\n", sD.PokemonDescription[13].GameVersion.Game)
 		fmt.Printf("Description: \n%v\n\n", sD.PokemonDescription[13].Descripton)
 		fmt.Printf("HP: %v\n", rD.PokemonStat[0].Value)
 		fmt.Printf("Attack: %v\n", rD.PokemonStat[1].Value)
